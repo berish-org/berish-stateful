@@ -25,12 +25,10 @@ export type IReactionCallback<T> = (result: IReactionResult<T>) => void | Promis
 export function reaction<TStateful extends StatefulObject<object>[], T>(
   stores: TStateful,
   cb: () => T,
-  reactionCallback: IReactionCallback<T>
+  reactionCallback?: IReactionCallback<T>,
 ): IReaction<T> {
   const reactionId = guid.guid();
-  console.log('stores', stores);
   let scopes = stores && stores.map((store) => getScope(store)).filter((m) => !!m);
-
   if (!scopes || scopes.length < 0) throw new Error('Need add stateful store in reaction');
 
   let propsModel: PropType[][][] = scopes.map(() => []);
@@ -39,9 +37,12 @@ export function reaction<TStateful extends StatefulObject<object>[], T>(
 
   const recordProps = (): T => {
     _checkIsNotRevoked();
+
     scopes.forEach((scope) => scope.cleanRecord(reactionId));
     scopes.forEach((scope) => scope.startRecord(reactionId));
+
     const result = cb();
+
     if (result instanceof Promise) {
       return result.then<T>((result) => {
         scopes.forEach((scope) => scope.stopRecord(reactionId));
@@ -58,30 +59,35 @@ export function reaction<TStateful extends StatefulObject<object>[], T>(
     if (isRevoked()) throw new Error('reaction revoked');
     return true;
   };
+
   const isActive = () => _checkIsNotRevoked() && listens && listens.length > 0;
   const isRevoked = () => !scopes;
 
   const start = (): void => {
     _checkIsNotRevoked();
     if (isActive()) return void 0;
+
     result = recordProps();
-    console.log('propsModel', propsModel);
+
     listens = scopes.map((scope, index) => {
       const listenId = scope.listenChangeProps(
         () => (propsModel ? propsModel[index] : []),
         async (props, oldValue, newValue) => {
           const newResult = recordProps();
-          await reactionCallback({
-            oldResult: result,
-            newResult,
-            props,
-            stateful: scope.stateful,
-            oldValueInStore: oldValue,
-            newValueInStore: newValue,
-          });
+          if (reactionCallback) {
+            await reactionCallback({
+              oldResult: result,
+              newResult,
+              props,
+              stateful: scope.stateful,
+              oldValueInStore: oldValue,
+              newValueInStore: newValue,
+            });
+          }
           result = newResult;
-        }
+        },
       );
+
       return {
         listenId,
         scope,
@@ -92,6 +98,7 @@ export function reaction<TStateful extends StatefulObject<object>[], T>(
   const stop = (): void => {
     _checkIsNotRevoked();
     if (!isActive()) return void 0;
+
     listens.map(({ listenId, scope }) => scope.unlistenChange(listenId));
     listens = null;
   };
