@@ -6,7 +6,7 @@ export function changeProps<T extends object>(
   stateful: StatefulObject<T>,
   props: PropType[],
   oldValue: any,
-  newValue: any
+  newValue: any,
 ) {
   const scope = getScope(stateful);
   const privateScope = getPrivateScope(stateful);
@@ -16,7 +16,7 @@ export function changeProps<T extends object>(
   for (const listener of privateScope.changePropsListeners) {
     if (listener.props) {
       const propsWhenUpdate = LINQ.from(listener.props());
-      if (propsWhenUpdate.some(m => LINQ.from(m).equalsValues(props))) listener.callback(props, oldValue, newValue);
+      if (propsWhenUpdate.some((m) => LINQ.from(m).equalsValues(props))) listener.callback(props, oldValue, newValue);
     } else listener.callback(props, oldValue, newValue);
   }
 

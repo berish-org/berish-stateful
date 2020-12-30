@@ -4,7 +4,5 @@ import { getPrivateScope } from './getPrivateScope';
 
 export function stopRecord<T extends object>(stateful: StatefulObject<T>, id: string) {
   const privateScope = getPrivateScope(stateful);
-  privateScope.records = LINQ.from(privateScope.records)
-    .except(id)
-    .distinct();
+  privateScope.records = LINQ.from(privateScope.records).except(id).distinct();
 }

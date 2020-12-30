@@ -6,7 +6,7 @@ import { getPrivateScope } from './getPrivateScope';
 export function listenChangeProps<T extends object>(
   stateful: StatefulObject<T>,
   getProps: PropType[][] | (() => PropType[][]),
-  callback: ListenChangePropsCallback
+  callback: ListenChangePropsCallback,
 ) {
   const id = guid.guid();
   const privateScope = getPrivateScope(stateful);
