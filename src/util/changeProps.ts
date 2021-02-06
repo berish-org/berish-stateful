@@ -9,30 +9,32 @@ export async function changeProps<T extends object>(
   oldValue: any,
   newValue: any,
 ) {
-  const scope = getScope(stateful);
-  const privateScope = getPrivateScope(stateful);
+  if (!Object.is(oldValue, newValue)) {
+    const scope = getScope(stateful);
+    const privateScope = getPrivateScope(stateful);
 
-  if (isFromSetState && privateScope.setStateWait) {
-    await privateScope.setStateWait;
-  }
+    if (privateScope.setStateWait) {
+      await privateScope.setStateWait;
+    }
 
-  for (const listener of privateScope.changePropsListeners) {
-    if (listener.props) {
-      const propsWhenUpdate = LINQ.from(listener.props());
-      if (propsWhenUpdate.some((m) => LINQ.from(m).equalsValues(props))) {
+    for (const listener of privateScope.changePropsListeners) {
+      if (listener.props) {
+        const propsWhenUpdate = LINQ.from(listener.props());
+        if (propsWhenUpdate.some((m) => LINQ.from(m).equalsValues(props))) {
+          listener.callback(props, oldValue, newValue);
+        }
+      } else {
         listener.callback(props, oldValue, newValue);
       }
-    } else {
-      listener.callback(props, oldValue, newValue);
     }
-  }
 
-  const links = getRoots(stateful);
-  for (const [linkProp, linkStateful] of links) {
-    changeProps(linkStateful, isFromSetState, [linkProp, ...props], oldValue, newValue);
-  }
+    const links = getRoots(stateful);
+    for (const [linkProp, linkStateful] of links) {
+      changeProps(linkStateful, isFromSetState, [linkProp, ...props], oldValue, newValue);
+    }
 
-  if (!isFromSetState) {
-    scope.saveStorage();
+    if (!isFromSetState) {
+      scope.saveStorage();
+    }
   }
 }
