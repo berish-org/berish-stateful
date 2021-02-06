@@ -24,7 +24,7 @@ export type IReactionCallback<T> = (result: IReactionResult<T>) => void | Promis
 
 export function reaction<TStateful extends StatefulObject<object>[], T>(
   stores: TStateful,
-  cb: () => T,
+  cb: (stateful: TStateful) => T,
   reactionCallback?: IReactionCallback<T>,
 ): IReaction<T> {
   const reactionId = guid.guid();
@@ -41,7 +41,7 @@ export function reaction<TStateful extends StatefulObject<object>[], T>(
     scopes.forEach((scope) => scope.cleanRecord(reactionId));
     scopes.forEach((scope) => scope.startRecord(reactionId));
 
-    const result = cb();
+    const result = cb(stores);
 
     if (result instanceof Promise) {
       return result.then<T>((result) => {

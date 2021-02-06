@@ -20,6 +20,8 @@ export interface IStatefulPrivateScope {
   storage?: StatefulStorage;
   changePropsListeners?: { id: string; callback: ListenChangePropsCallback; props: () => PropType[][] }[];
   storageListeners?: (() => void)[];
+
+  setStateWait?: Promise<void>;
 }
 
 export interface IStatefulScope<T extends object> {
@@ -37,7 +39,10 @@ export interface IStatefulScope<T extends object> {
   setRecordProps?: (id: string, value: PropType[][]) => void;
   listenChange?: (cb: ListenChangePropsCallback) => string;
   listenChangeProps?: (props: PropType[][] | (() => PropType[][]), cb: ListenChangePropsCallback) => string;
-  reaction?: <T>(cb: () => T, reactionCallback: IReactionCallback<T>) => IReaction<T>;
+  reaction?: <TObject>(
+    cb: (stateful: [StatefulObject<T>]) => TObject,
+    reactionCallback: IReactionCallback<TObject>,
+  ) => IReaction<TObject>;
   unlistenChange?: (listenId: string) => void;
 
   getStorage?: () => StatefulStorage;
@@ -47,9 +52,10 @@ export interface IStatefulScope<T extends object> {
   clearStorage?: () => Promise<void>;
   listenStorage?: () => () => void;
   unlistenAllStorage?: () => void;
+  disableStorageWrite?: <TData>(callback: () => TData) => TData;
 
-  setState?: (state: Partial<T>, disableWriteAccessStorage?: boolean) => void;
-  setValue?: (props: PropType[], value: any) => void;
+  setState?: (state: Partial<T>, disableStorage?: boolean) => void;
+  setValue?: (props: PropType[], value: any, disableStorage?: boolean) => void;
 }
 
 /**

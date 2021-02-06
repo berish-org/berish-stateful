@@ -20,6 +20,7 @@ export * from './clearStorage';
 export * from './saveStorage';
 export * from './listenStorage';
 export * from './unlistenAllStorage';
+export * from './disableStorageWrite';
 
 export * from './reaction';
 export * from './setState';

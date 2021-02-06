@@ -15,7 +15,7 @@ export function createHandler<T extends object>() {
     },
     set: function (target: T, prop: PropType, value: any) {
       if (prop === SYMBOL_STATEFUL_SCOPE) throw new Error(`You can't change default stateful scope`);
-      return setHandler(scope, prop, value);
+      return setHandler(scope, false, prop, value);
     },
   };
   return proxyHandler;

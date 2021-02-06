@@ -1,3 +1,4 @@
+import debounce from 'lodash.debounce';
 import { IStatefulStorageAdapter } from './types';
 
 /**
@@ -7,6 +8,8 @@ export class StatefulStorage {
   private _storageAdapter: IStatefulStorageAdapter = null;
   private _writeAccess: boolean = true;
   private _name: string = null;
+  private _wait: number = 100;
+  private _save: (state: any) => Promise<void>;
 
   constructor(name: string, storageAdapter: IStatefulStorageAdapter) {
     this._storageAdapter = storageAdapter;
@@ -19,6 +22,15 @@ export class StatefulStorage {
 
   set name(value: string) {
     this._name = value;
+  }
+
+  get wait() {
+    return this._wait;
+  }
+
+  set wait(value: number) {
+    if (this._wait !== value) this._save = null;
+    this._wait = value;
   }
 
   get writeAccess() {
@@ -34,8 +46,13 @@ export class StatefulStorage {
   }
 
   public async save(state: any) {
-    const newState = (this.adapter.serialize && (await this.adapter.serialize(state))) || state;
-    if (this.writeAccess && this.adapter.setItem) await this.adapter.setItem(this.name, newState);
+    if (!this._save) {
+      this._save = debounce(async (state) => {
+        const newState = (this.adapter.serialize && (await this.adapter.serialize(state))) || state;
+        if (this.writeAccess && this.adapter.setItem) await this.adapter.setItem(this.name, newState);
+      }, this.wait);
+    }
+    return this._save(state);
   }
 
   public async load() {

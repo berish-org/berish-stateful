@@ -21,6 +21,7 @@ import {
   getStorage,
   setRecordProps,
   listenChangeProps,
+  disableStorageWrite,
 } from './methods';
 import { setStorage } from './methods/setStorage';
 
@@ -57,6 +58,7 @@ export function createStatefulForce<T extends object>(target: T) {
   scope.listenChange = (callback) => listenChange(stateful, callback);
   scope.listenChangeProps = (props, callback) => listenChangeProps(stateful, props, callback);
   scope.unlistenChange = (id) => unlistenChange(stateful, id);
+  scope.disableStorageWrite = (callback) => disableStorageWrite(stateful, callback);
 
   scope.getStorage = () => getStorage(stateful);
   scope.setStorage = (storage) => setStorage(stateful, storage);
@@ -67,8 +69,8 @@ export function createStatefulForce<T extends object>(target: T) {
   scope.unlistenAllStorage = () => unlistenAllStorage(stateful);
 
   scope.reaction = (cb, reactionCallback) => reaction([stateful], cb, reactionCallback);
-  scope.setState = (state, notEmitStorage) => setState(stateful, state, notEmitStorage);
-  scope.setValue = (props, value) => setValue(stateful, props, value);
+  scope.setState = (state, disableStorage) => setState(stateful, state, disableStorage);
+  scope.setValue = (props, value, disableStorage) => setValue(stateful, props, value, disableStorage);
 
   return stateful;
 }

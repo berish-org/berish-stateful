@@ -1,14 +1,17 @@
 import { IStatefulScope, PropType } from '../types';
 import { getTarget, isStateful } from '../methods';
 import { reflectGet, reflectSet, changeProps, isPotentialStateful, isLinked, link, unlink } from '../util';
-import cache from '../cache';
 import { createStateful } from '../createStateful';
-import { create } from 'domain';
 
 /**
  * Обработчик записи данных длЯ IStatefulScope (setter метод)
  */
-export function setHandler<T extends object>(scope: IStatefulScope<T>, prop: PropType, value: any) {
+export function setHandler<T extends object>(
+  scope: IStatefulScope<T>,
+  isFromSetState: boolean,
+  prop: PropType,
+  value: any,
+) {
   const stateful = scope.stateful;
   const target = getTarget(stateful);
   const oldValue = reflectGet(target, prop, stateful);
@@ -52,6 +55,6 @@ export function setHandler<T extends object>(scope: IStatefulScope<T>, prop: Pro
    * Общий механизм
    * Вызываем callback изменения значений
    */
-  if (oldValue !== value) changeProps(stateful, [prop], oldValue, value);
+  if (oldValue !== value) changeProps(stateful, isFromSetState, [prop], oldValue, value);
   return true;
 }
