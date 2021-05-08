@@ -1,5 +1,5 @@
 import LINQ from '@berish/linq';
-import { StatefulObject, IStatefulPrivateScope } from './types';
+import { StatefulObject, StatefulPrivateScope } from './types';
 import { SYMBOL_STATEFUL_PRIVATE_SCOPE } from './const';
 import { createHandler } from './handlers';
 import {
@@ -36,7 +36,7 @@ export function createStatefulForce<T extends object>(target: T) {
   const stateful = resultProxy.proxy as StatefulObject<T>;
   const revoke = resultProxy.revoke;
   const scope = getScope(stateful);
-  const privateScope: IStatefulPrivateScope = {};
+  const privateScope: StatefulPrivateScope = {};
 
   scope.target = target;
   scope.stateful = stateful;

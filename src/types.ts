@@ -4,14 +4,14 @@ import { StatefulStorage } from './storage';
 import { IReaction, IReactionCallback } from './methods';
 
 export type StatefulObject<T extends object> = T & {
-  [SYMBOL_STATEFUL_SCOPE]: IStatefulScope<T>;
+  [SYMBOL_STATEFUL_SCOPE]: StatefulScope<T>;
 };
 
 export type PropType = string | symbol | number;
 
 export type ListenChangePropsCallback = (props: PropType[], oldValue: any, newValue: any) => void;
 
-export interface IStatefulPrivateScope {
+export interface StatefulPrivateScope {
   roots?: LINQ<[PropType, StatefulObject<object>]>;
   records?: string[];
   recordProps?: {
@@ -24,10 +24,10 @@ export interface IStatefulPrivateScope {
   setStateWait?: Promise<void>;
 }
 
-export interface IStatefulScope<T extends object> {
+export interface StatefulScope<T extends object> {
   target?: T;
   stateful?: StatefulObject<T>;
-  [SYMBOL_STATEFUL_PRIVATE_SCOPE]?: IStatefulPrivateScope;
+  [SYMBOL_STATEFUL_PRIVATE_SCOPE]?: StatefulPrivateScope;
 
   revoke?: () => void;
   getRoots?: () => StatefulObject<object>[];
@@ -61,7 +61,7 @@ export interface IStatefulScope<T extends object> {
 /**
  * Адаптер, для интеграции работы StatefulStorage с внешним источником данных
  */
-export interface IStatefulStorageAdapter {
+export interface StatefulStorageAdapter {
   /**
    * Чтение значения по ключу
    */

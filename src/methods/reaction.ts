@@ -1,5 +1,5 @@
 import guid from 'berish-guid';
-import { StatefulObject, PropType, IStatefulScope } from '../types';
+import { StatefulObject, PropType, StatefulScope } from '../types';
 import { getScope } from './getScope';
 
 export interface IReaction<T> {
@@ -32,7 +32,7 @@ export function reaction<TStateful extends StatefulObject<object>[], T>(
   if (!scopes || scopes.length < 0) throw new Error('Need add stateful store in reaction');
 
   let propsModel: PropType[][][] = scopes.map(() => []);
-  let listens: { listenId: string; scope: IStatefulScope<object> }[] = null;
+  let listens: { listenId: string; scope: StatefulScope<object> }[] = null;
   let result: T = void 0;
 
   const recordProps = (): T => {

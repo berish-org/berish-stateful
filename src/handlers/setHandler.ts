@@ -1,13 +1,13 @@
-import { IStatefulScope, PropType } from '../types';
+import { StatefulScope, PropType } from '../types';
 import { getTarget, isStateful } from '../methods';
 import { reflectGet, reflectSet, changeProps, isPotentialStateful, isLinked, link, unlink } from '../util';
 import { createStateful } from '../createStateful';
 
 /**
- * Обработчик записи данных длЯ IStatefulScope (setter метод)
+ * Обработчик записи данных длЯ StatefulScope (setter метод)
  */
 export function setHandler<T extends object>(
-  scope: IStatefulScope<T>,
+  scope: StatefulScope<T>,
   isFromSetState: boolean,
   prop: PropType,
   value: any,

@@ -28,7 +28,7 @@
   "scripts": {
     "test": "jest --config jestconfig.json",
     "test:dev": "jest --config jestconfig.json --watch --verbose=false",
-    "build": "tsc -p .",
+    "build": "rm -rf build && tsc -p .",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",
@@ -54,7 +54,7 @@
     "typescript": "^4.0.5"
   },
   "dependencies": {
-    "@berish/linq": "^1.1.0",
+    "@berish/linq": "^1.2.0",
     "@berish/pathof": "^1.1.0",
     "@berish/typeof": "^1.0.0",
     "berish-guid": "^2.0.0",

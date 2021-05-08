@@ -1,17 +1,17 @@
 import debounce from 'lodash.debounce';
-import { IStatefulStorageAdapter } from './types';
+import { StatefulStorageAdapter } from './types';
 
 /**
  * Адаптер, для работы
  */
 export class StatefulStorage {
-  private _storageAdapter: IStatefulStorageAdapter = null;
+  private _storageAdapter: StatefulStorageAdapter = null;
   private _writeAccess: boolean = true;
   private _name: string = null;
   private _wait: number = 100;
   private _save: (state: any) => Promise<void>;
 
-  constructor(name: string, storageAdapter: IStatefulStorageAdapter) {
+  constructor(name: string, storageAdapter: StatefulStorageAdapter) {
     this._storageAdapter = storageAdapter;
     this.name = name;
   }

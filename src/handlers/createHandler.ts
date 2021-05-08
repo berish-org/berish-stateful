@@ -1,4 +1,4 @@
-import { IStatefulScope, PropType } from '../types';
+import { StatefulScope, PropType } from '../types';
 import { getHandler } from './getHandler';
 import { setHandler } from './setHandler';
 import { SYMBOL_STATEFUL_SCOPE } from '../const';
@@ -7,7 +7,7 @@ import { SYMBOL_STATEFUL_SCOPE } from '../const';
  * Создает обработчики для чтения и изменения значений через ProxyHandler
  */
 export function createHandler<T extends object>() {
-  const scope: IStatefulScope<T> = {};
+  const scope: StatefulScope<T> = {};
   const proxyHandler: ProxyHandler<T> = {
     get: function (target: T, prop: PropType) {
       if (prop === SYMBOL_STATEFUL_SCOPE) return scope;
