@@ -2,7 +2,7 @@ import guid from 'berish-guid';
 import { StatefulObject, PropType, StatefulScope } from '../types';
 import { getScope } from './getScope';
 
-export interface IReaction<T> {
+export interface Reaction<T> {
   reactionId?: string;
   start: () => void;
   stop: () => void;
@@ -11,7 +11,7 @@ export interface IReaction<T> {
   result: () => T;
 }
 
-export interface IReactionResult<T> {
+export interface ReactionResult<T> {
   oldResult: T;
   newResult: T;
   props: PropType[];
@@ -20,13 +20,13 @@ export interface IReactionResult<T> {
   newValueInStore: any;
 }
 
-export type IReactionCallback<T> = (result: IReactionResult<T>) => void | Promise<void>;
+export type ReactionCallback<T> = (result: ReactionResult<T>) => void | Promise<void>;
 
 export function reaction<TStateful extends StatefulObject<object>[], T>(
   stores: TStateful,
   cb: (stateful: TStateful) => T,
-  reactionCallback?: IReactionCallback<T>,
-): IReaction<T> {
+  reactionCallback?: ReactionCallback<T>,
+): Reaction<T> {
   const reactionId = guid.guid();
   let scopes = stores && stores.map((store) => getScope(store)).filter((m) => !!m);
   if (!scopes || scopes.length < 0) throw new Error('Need add stateful store in reaction');

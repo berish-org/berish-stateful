@@ -1,7 +1,7 @@
 import LINQ from '@berish/linq';
 import { SYMBOL_STATEFUL_SCOPE, SYMBOL_STATEFUL_PRIVATE_SCOPE } from './const';
 import { StatefulStorage } from './storage';
-import { IReaction, IReactionCallback } from './methods';
+import { Reaction, ReactionCallback } from './methods';
 
 export type StatefulObject<T extends object> = T & {
   [SYMBOL_STATEFUL_SCOPE]: StatefulScope<T>;
@@ -41,8 +41,8 @@ export interface StatefulScope<T extends object> {
   listenChangeProps?: (props: PropType[][] | (() => PropType[][]), cb: ListenChangePropsCallback) => string;
   reaction?: <TObject>(
     cb: (stateful: [StatefulObject<T>]) => TObject,
-    reactionCallback: IReactionCallback<TObject>,
-  ) => IReaction<TObject>;
+    reactionCallback: ReactionCallback<TObject>,
+  ) => Reaction<TObject>;
   unlistenChange?: (listenId: string) => void;
 
   getStorage?: () => StatefulStorage;
